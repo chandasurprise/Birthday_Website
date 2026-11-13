@@ -1163,8 +1163,14 @@ Talking to you is my favorite part of the day because you make even the most ord
             return birthdayMusic.play().then(() => {
                 setMusicPlayingState(true);
                 return true;
-            }).catch(() => {
-                musicStatusText.innerText = 'Tap to play';
+            }).catch(error => {
+                if (error.name === 'NotAllowedError') {
+                    musicStatusText.innerText = 'Tap to play';
+                    return false;
+                }
+
+                console.error('Birthday music playback failed:', error);
+                musicStatusText.innerText = 'Music unavailable';
                 return false;
             });
         }
@@ -1203,11 +1209,17 @@ Talking to you is my favorite part of the day because you make even the most ord
         document.addEventListener('pointerdown', startBirthdayMusicAfterInteraction);
         document.addEventListener('touchstart', startBirthdayMusicAfterInteraction, { passive: true });
         document.addEventListener('keydown', startBirthdayMusicAfterInteraction);
-        requestBirthdayMusicPlayback();
+
+        birthdayMusic.addEventListener('error', () => {
+            console.error('Birthday music could not be loaded:', birthdayMusic.error);
+            musicStatusText.innerText = 'Music unavailable';
+        });
 
         birthdayMusic.addEventListener('pause', () => {
             setMusicPlayingState(false);
         });
+
+        requestBirthdayMusicPlayback();
 
         const birthdayVideo = document.querySelector('#videoSection video');
         let shouldResumeBirthdayMusicAfterVideo = false;
