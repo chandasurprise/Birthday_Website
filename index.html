@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Chanda! ❤️</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet OpenStreetMap CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FCF8F9',
+                            100: '#FAF2F4',
+                            200: '#F5E6E8',
+                            300: '#EBD2D6',
+                        },
+                        pink: {
+                            100: '#FFEBEF',
+                            200: '#FFD6DF',
+                            300: '#FFB3C3',
+                            400: '#FF809B',
+                            500: '#FF4D73',
+                            600: '#E62E5C',
+                        },
+                        maroon: {
+                            50: '#FBF2F4',
+                            100: '#F7E3E7',
+                            500: '#A82C48',
+                            700: '#702236',
+                            800: '#5A1425',
+                            900: '#2C121A',
+                        },
+                        gold: {
+                            400: '#F3C649',
+                            500: '#D4A017',
+                        }
+                    },
+                    fontFamily: {
+                        script: ['"Great Vibes"', 'cursive'],
+                        handwriting: ['Caveat', 'cursive'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #752438;
+            color: #2C121A;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .paper-texture {
+            background-color: #FAF2F4;
+            background-image: radial-gradient(#A82C48 0.3px, transparent 0.3px), radial-gradient(#A82C48 0.3px, #FAF2F4 0.3px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .tape-effect {
+            position: relative;
+        }
+        .tape-effect::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            width: 80px;
+            height: 22px;
+            background: rgba(255, 235, 239, 0.85);
+            border: 1px dashed rgba(168, 44, 72, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            z-index: 20;
+            backdrop-filter: blur(1px);
+        }
+
+        /* 3D Envelope Animations */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope-flap {
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 30;
+        }
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+        .letter-paper {
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            pointer-events: none;
+        }
+        .envelope-wrapper.open .letter-paper {
+            transform: translateY(-220px);
+            z-index: 40;
+            pointer-events: auto;
+        }
+        @media (max-width: 640px) {
+            #musicToggleBtn {
+                display: flex;
+                width: 2.75rem;
+                height: 2.75rem;
+                padding: 0;
+                justify-content: center;
+            }
+            #musicToggleBtn > div:last-child {
+                display: none;
+            }
+            #letterSection > .bg-cream-50 {
+                overflow: visible;
+            }
+            .envelope-wrapper.open .letter-paper {
+                position: relative;
+                inset: auto;
+                margin: 1rem 1rem 0;
+                max-height: none;
+                overflow: visible;
+                transform: none;
+            }
+            #letterPaper .letter-signoff {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            #letterPaper .letter-signoff > button {
+                flex: 0 0 auto;
+            }
+            #letterPaper .letter-signature {
+                margin-left: auto;
+                max-width: 8rem;
+                font-size: 1.25rem;
+                line-height: 1.1;
+                text-align: right;
+            }
+        }
+
+        /* Little Wishing Jar */
+        .wish-jar-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .wish-jar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 160px;
+            height: 162px;
+            margin-top: 8px;
+            border: 4px solid rgba(112, 34, 54, 0.55);
+            border-radius: 42px 42px 34px 34px;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.95) 0 5%, transparent 6%),
+                linear-gradient(115deg, rgba(255,255,255,0.85), rgba(255,214,223,0.58) 45%, rgba(255,255,255,0.72));
+            box-shadow: inset 12px 0 18px rgba(255,255,255,0.8), inset -10px -8px 18px rgba(168,44,72,0.1), 0 18px 24px rgba(112,34,54,0.18);
+            transition: transform 220ms ease, box-shadow 220ms ease;
+        }
+        .wish-jar::before {
+            content: "";
+            position: absolute;
+            top: -19px;
+            left: 50%;
+            width: 82px;
+            height: 22px;
+            transform: translateX(-50%);
+            border: 3px solid #702236;
+            border-radius: 8px 8px 5px 5px;
+            background: repeating-linear-gradient(90deg, #EBD2D6 0 8px, #F7E3E7 8px 12px);
+            box-shadow: 0 4px 5px rgba(112,34,54,0.12);
+        }
+        .wish-jar::after {
+            content: "";
+            position: absolute;
+            top: 16px;
+            left: 17px;
+            width: 12px;
+            height: 125px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.62);
+            transform: rotate(4deg);
+        }
+        .wish-jar-button:hover .wish-jar,
+        .wish-jar-button:focus-visible .wish-jar {
+            transform: translateY(-5px) rotate(-2deg);
+            box-shadow: inset 12px 0 18px rgba(255,255,255,0.8), inset -10px -8px 18px rgba(168,44,72,0.1), 0 24px 30px rgba(112,34,54,0.23);
+        }
+        .wish-jar-button:focus-visible {
+            outline: 3px solid #FF809B;
+            outline-offset: 8px;
+            border-radius: 1rem;
+        }
+        .wish-jar-stars {
+            z-index: 1;
+            color: #A82C48;
+            font-size: 1.65rem;
+            letter-spacing: 0.28rem;
+            text-shadow: 0 2px 8px rgba(243,198,73,0.75);
+        }
+        .wish-jar-heart {
+            position: absolute;
+            z-index: 1;
+            bottom: 35px;
+            color: #E62E5C;
+            font-size: 2rem;
+            text-shadow: 0 2px 8px rgba(230,46,92,0.22);
+        }
+        .wish-message-card {
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            width: min(100%, 400px);
+            min-height: 88px;
+            margin: 0.5rem 0;
+            padding: 0.65rem 1rem;
+            border: 1px solid rgba(112,34,54,0.14);
+            border-radius: 1rem;
+            background: linear-gradient(145deg, #fffafd, #f8e9ee);
+            color: #702236;
+            cursor: pointer;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+            transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+        }
+        .wish-message-card[hidden] {
+            display: none;
+        }
+        .wish-message-card.is-visible {
+            border-color: rgba(168,44,72,0.3);
+            background: linear-gradient(145deg, #fff4f8, #f9e3eb);
+            box-shadow: 0 6px 18px rgba(112,34,54,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+            animation: wishMessageAppear 250ms ease-out both;
+        }
+        .wish-message-card:focus-visible {
+            outline: 3px solid #FF809B;
+            outline-offset: 3px;
+        }
+        .wish-screen-message {
+            margin: 0;
+            color: #702236;
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.5rem, 2.5vw, 1.9rem);
+            line-height: 1.1;
+            text-wrap: balance;
+        }
+        .wish-screen-hint {
+            color: rgba(112,34,54,0.65);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+        }
+        @keyframes wishMessageAppear {
+            from { opacity: 0.65; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .wish-jar,
+            .wish-message-card {
+                transition: none;
+                animation: none;
+            }
+        }
+        .wish-game-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1rem;
+            align-items: start;
+        }
+        .wish-jar-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            min-width: 0;
+            height: 540px;
+            padding: 1.75rem 2rem;
+        }
+        .wish-jar-heading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .game-panel {
+            width: 100%;
+            min-width: 0;
+            height: 540px;
+            padding: 0.375rem;
+            border: 1px solid rgba(112, 34, 54, 0.2);
+            border-radius: 0.75rem;
+            background: #FAF2F4;
+            box-shadow: 0 10px 24px rgba(44, 18, 26, 0.12);
+        }
+        .game-frame {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 0.5rem;
+            background: #fff7fa;
+        }
+        @media (max-width: 900px) {
+            .wish-game-layout {
+                grid-template-columns: minmax(0, 1fr);
+                max-width: 560px;
+                margin: 0 auto;
+            }
+            .game-panel {
+                height: 540px;
+            }
+            .wish-jar-panel {
+                padding: 1.5rem;
+            }
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+            50% { transform: scale(1.15) rotate(1deg); opacity: 1; filter: drop-shadow(0 0 10px #F3C649); }
+        }
+        .flame-anim {
+            animation: flicker 0.6s infinite alternate ease-in-out;
+            transform-origin: center bottom;
+        }
+        #cakeCanvas {
+            touch-action: none;
+            cursor: crosshair;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .cake-cut-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+        .cake-serving-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            min-height: 288px;
+            padding: 1rem;
+            border: 1px solid rgba(112, 34, 54, 0.12);
+            border-radius: 1rem;
+            background: linear-gradient(145deg, #fffafd, #f8e9ee);
+        }
+        .cake-serving-view svg {
+            display: block;
+            width: 100%;
+            max-width: 270px;
+            height: auto;
+            overflow: visible;
+        }
+        .cake-slice-illustration {
+            transform-origin: center;
+        }
+        .cake-slice-illustration.is-new {
+            animation: serveCakeSlice 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+        @keyframes serveCakeSlice {
+            from { opacity: 0; transform: translate(-12px, -20px) rotate(-5deg) scale(0.82); }
+            to { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); }
+        }
+        @media (max-width: 640px) {
+            .cake-cut-layout {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                max-width: 420px;
+                gap: 0.5rem;
+            }
+            .cake-serving-view {
+                min-height: 0;
+                padding: 0.5rem;
+            }
+            .cake-serving-view svg {
+                max-width: 180px;
+            }
+            .wish-message-card {
+                min-height: 82px;
+                padding: 1.5rem 1.25rem;
+            }
+            .wish-message-card.is-visible {
+                position: fixed;
+                inset: 0;
+                z-index: 10000;
+                width: 100%;
+                min-height: 100vh;
+                min-height: 100dvh;
+                height: 100vh;
+                height: 100dvh;
+                margin: 0;
+                padding: max(2rem, env(safe-area-inset-top)) 1.5rem max(2rem, env(safe-area-inset-bottom));
+                border: 0;
+                border-radius: 0;
+                background:
+                    radial-gradient(circle at 20% 20%, rgba(255,214,223,0.2), transparent 30%),
+                    radial-gradient(circle at 80% 75%, rgba(243,198,73,0.12), transparent 28%),
+                    rgba(44,18,26,0.97);
+                color: #FCF8F9;
+                box-shadow: none;
+                gap: 1rem;
+            }
+            .wish-screen-message {
+                font-size: clamp(1.7rem, 8vw, 2rem);
+            }
+            .wish-message-card.is-visible .wish-screen-message {
+                max-width: 24rem;
+                color: #FFF7FA;
+                font-size: clamp(2.6rem, 10vw, 4rem);
+            }
+            .wish-message-card.is-visible .wish-screen-hint {
+                max-width: 18rem;
+                color: rgba(255,235,239,0.82);
+                font-size: 0.7rem;
+                line-height: 1.6;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .cake-slice-illustration.is-new {
+                animation: none;
+            }
+        }
+        #cakeSideContainer .cake-side-stage {
+            width: min(16rem, 100%);
+            height: auto;
+            aspect-ratio: 1;
+        }
+        #cakeSideContainer .cake-side-top-tier {
+            width: 62.5%;
+        }
+        #cakeSideContainer .cake-side-bottom-tier {
+            width: 87.5%;
+        }
+        #cakeSideContainer .cake-side-plate {
+            width: 100%;
+        }
+        #cakeTopContainer .cake-canvas-frame {
+            width: min(288px, 100%);
+        }
+
+        /* Heart Canvas Overlay */
+        #heartCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Leaflet custom map markers */
+        .custom-heart-pin {
+            background-color: #702236;
+            border: 2px solid #FAF2F4;
+            color: #FAF2F4;
+            border-radius: 50%;
+            width: 32px !important;
+            height: 32px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            font-size: 14px;
+        }
+
+        .journey-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+            gap: 1rem;
+            align-items: stretch;
+        }
+        .journey-map-frame,
+        .journey-location-grid {
+            height: 520px;
+        }
+        .journey-location-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-rows: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .journey-location-card {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            /* grid-template-rows: auto 1fr; */
+            align-content: center;
+            gap: 0.4rem 0.65rem;
+            min-width: 0;
+            padding: 0.85rem;
+            border: 1px solid rgba(112, 34, 54, 0.18);
+            border-radius: 0.75rem;
+            background: rgba(245, 230, 232, 0.65);
+            color: #2C121A;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+        .journey-location-card:hover,
+        .journey-location-card:focus-visible {
+            border-color: #A82C48;
+            box-shadow: 0 6px 16px rgba(112, 34, 54, 0.12);
+            outline: none;
+        }
+        .journey-location-card[aria-pressed="true"] {
+            border-color: #702236;
+            background: #F7E3E7;
+        }
+        .journey-location-card:last-child {
+            grid-column: 1 / -1;
+        }
+        .journey-location-icon {
+            grid-row: 1 / span 2;
+            align-self: center;
+            font-size: 1.5rem;
+        }
+        .journey-location-title {
+            align-self: end;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .journey-location-description {
+            align-self: start;
+            color: rgba(44, 18, 26, 0.76);
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+        .calendar-note-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+            align-items: stretch;
+            gap: 1rem;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .calendar-note-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 100%;
+            padding: 1.25rem;
+        }
+        .calendar-note-date {
+            color: #E62E5C;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+        .calendar-note-description {
+            color: #2C121A;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        @media (max-width: 900px) {
+            .journey-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .journey-map-frame {
+                height: clamp(280px, 45vh, 360px);
+            }
+            .journey-location-grid {
+                height: auto;
+                grid-template-rows: repeat(4, minmax(84px, auto));
+            }
+            .journey-location-card[aria-pressed="true"] {
+                order: -1;
+            }
+        }
+        @media (max-width: 420px) {
+            .journey-location-grid {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: repeat(7, minmax(76px, auto));
+            }
+            .journey-location-card:last-child {
+                grid-column: auto;
+            }
+        }
+        @media (max-width: 640px) {
+            .calendar-note-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .calendar-note-panel {
+                min-height: 90px;
+            }
+        }
+
+        /* Emoticon Button Glow active state */
+        .emo-btn.active {
+            background: linear-gradient(135deg, #702236, #A82C48);
+            color: #FAF2F4;
+            box-shadow: 0 8px 20px rgba(112, 34, 54, 0.35);
+            transform: translateY(-3px) scale(1.08);
+        }
+
+        @keyframes giftShake {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-8deg) scale(1.05); }
+            40% { transform: rotate(8deg) scale(1.05); }
+            60% { transform: rotate(-6deg) scale(1.05); }
+            80% { transform: rotate(6deg) scale(1.05); }
+        }
+        .animate-gift-shake {
+            animation: giftShake 0.8s ease-in-out infinite;
+        }
+
+        @keyframes floatingPetal {
+            0% { transform: translate(0, 0) rotate(0deg) scale(0.8); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translate(var(--petal-x), var(--petal-y)) rotate(var(--petal-rotation)) scale(1); opacity: 0; }
+        }
+        .floating-petal {
+            position: fixed;
+            width: 12px;
+            height: 18px;
+            border-radius: 100% 0 100% 0;
+            pointer-events: none;
+            z-index: 30;
+            animation: floatingPetal 1.8s ease-out forwards;
+        }
+        @keyframes birthdayHeartReveal {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.25); }
+            18% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+            34% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            78% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+        }
+        .birthday-heart-reveal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 100;
+            color: #E62E5C;
+            font-family: Arial, sans-serif;
+            font-size: clamp(10rem, 48vw, 22rem);
+            line-height: 1;
+            filter: drop-shadow(0 10px 24px rgba(112, 34, 54, 0.35));
+            pointer-events: none;
+            animation: birthdayHeartReveal 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .birthday-heart-reveal {
+                animation-duration: 0.8s;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FAF2F4; }
+        ::-webkit-scrollbar-thumb { background: #A82C48; border-radius: 4px; }
+    </style>
+</head>
+<body class="paper-texture min-h-screen relative flex flex-col justify-between selection:bg-pink-200 selection:text-maroon-900">
+
+    <canvas id="heartCanvas"></canvas>
+    <audio id="birthdayMusic" src="./Chanda.mp3" preload="auto" autoplay loop></audio>
+
+    <div class="relative z-10">
+        
+        <!-- Floating Audio Control Pill (Image 1 Style) -->
+        <div class="fixed top-4 right-4 z-50">
+            <button id="musicToggleBtn" type="button" onclick="toggleAudio()" aria-label="Play or pause birthday music" title="Play or pause birthday music" class="flex items-center gap-3 bg-cream-50/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-pink-200 hover:shadow-xl transition-all duration-300">
+                <div id="musicIconCircle" class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-cream-50 text-sm shadow-md transition-transform duration-500">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div class="flex flex-col text-left">
+                    <span id="musicStatusText" class="text-xs font-semibold text-maroon-900 tracking-wide">Play Melody</span>
+                    <span class="text-[10px] text-pink-600 font-bold">Click to play / pause</span>
+                </div>
+            </button>
+        </div>
+
+        <main class="max-w-5xl mx-auto px-4 pt-8 pb-2 md:pt-14 md:pb-3 text-center">
+            
+            <div class="flex flex-col items-center">
+                <!-- Top Romantic Title -->
+                <h1 class="font-script text-5xl md:text-7xl lg:text-6xl text-maroon-700 mb-6 drop-shadow-sm flex items-center justify-center gap-3">
+                    Happy Birthday, Chanda <span class="text-pink-500 inline-block animate-pulse">🎁</span>
+                </h1>
+
+                <!-- Cute Illustration Card (Screenshot 1) -->
+                <div class="bg-cream-50 border border-maroon-700/15 rounded-2xl p-6 md:p-8 shadow-xl max-w-md w-full relative transform hover:scale-[1.01] transition duration-300">
+                    <div class="w-full h-64 bg-black rounded-xl border border-pink-200 flex items-center justify-center relative overflow-hidden mb-5">
+                        <img src="./Chanda.jpeg" alt="Birthday girl with cake illustration" class="w-full h-full object-contain drop-shadow-md" />
+
+                        <!-- Hearts and Flowers Overlay -->
+                        <span class="absolute top-4 left-6 text-xl">🌸</span>
+                        <span class="absolute top-4 right-6 text-xl">⭐</span>
+                        <span class="absolute bottom-4 left-6 text-xl">✨</span>
+                        <span class="absolute bottom-4 right-6 text-xl">🌸</span>
+                    </div>
+
+                    <p class="font-sans text-xs md:text-sm text-maroon-800/80 leading-relaxed font-medium px-2">
+Some names are beautiful, but some people make their names even more beautiful.<br>
+Chanda, just like the moon that brightens the darkest night.<br>
+I may not always find the perfect words to express what you mean to me, but I hope you always know how precious you are.Your smile deserves endless reasons to shine, your heart deserves all the happiness in the world, and your dreams deserve to come true.
+                    </p>
+
+                </div>
+
+                <!-- Hero Name Badge -->
+                <div class="mt-8">
+  
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 2. Small Compact Calendar Section (Image 2 Style) -->
+        <section class="max-w-4xl mx-auto px-4 pt-2 pb-8 md:pt-3">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-6 md:p-8 shadow-xl">
+                <div class="text-center max-w-2xl mx-auto mb-6">
+                    <h2 class="font-serif text-2xl md:text-3xl font-bold text-maroon-900 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-pink-500 text-xl"></i> November Where Miracles Happen
+                    </h2>
+                </div>
+
+                <div class="calendar-note-layout">
+                <div class="calendar-card bg-cream-50 rounded-2xl p-5 shadow-md border border-pink-200">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-pink-200">
+                        <h3 class="font-script text-3xl text-pink-600">November</h3>
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-pink-100 text-maroon-700 rounded-full border border-pink-200">2026</span>
+                    </div>
+                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-maroon-700/50 mb-2">
+                        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs">
+                        <button onclick="showCalendarNote(1)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">1</button>
+                        <button onclick="showCalendarNote(2)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">2</button>
+                        <button onclick="showCalendarNote(3)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">3</button>
+                        <button onclick="showCalendarNote(4)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">4</button>
+                        <button onclick="showCalendarNote(5)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">5</button>
+                        <button onclick="showCalendarNote(6)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">6</button>
+                        <button onclick="showCalendarNote(7)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">7</button>
+                        <button onclick="showCalendarNote(8)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">8</button>
+                        <button onclick="showCalendarNote(9)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">9</button>
+                        <button onclick="showCalendarNote(10)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">10</button>
+                        <button onclick="showCalendarNote(11)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">11</button>
+                        <button onclick="showCalendarNote(12)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">12</button>
+                        <button onclick="showCalendarNote(13)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">13</button>
+                        <button onclick="showCalendarNote(14)" class="relative p-1.5 bg-pink-500 text-cream-50 font-bold rounded-lg shadow-sm hover:scale-110 transition-transform">14<span class="absolute -top-1 -right-1 text-[9px]">❤️</span></button>
+                        <button onclick="showCalendarNote(15)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">15</button>
+                        <button onclick="showCalendarNote(16)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">16</button>
+                        <button onclick="showCalendarNote(17)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">17</button>
+                        <button onclick="showCalendarNote(18)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">18</button>
+                        <button onclick="showCalendarNote(19)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">19</button>
+                        <button onclick="showCalendarNote(20)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">20</button>
+                        <button onclick="showCalendarNote(21)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">21</button>
+                        <button onclick="showCalendarNote(22)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">22</button>
+                        <button onclick="showCalendarNote(23)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">23</button>
+                        <button onclick="showCalendarNote(24)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">24</button>
+                        <button onclick="showCalendarNote(25)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">25</button>
+                        <button onclick="showCalendarNote(26)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">26</button>
+                        <button onclick="showCalendarNote(27)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">27</button>
+                        <button onclick="showCalendarNote(28)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">28</button>
+                        <button onclick="showCalendarNote(29)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">29</button>
+                        <button onclick="showCalendarNote(30)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">30</button>
+                    </div>
+                </div>
+
+                <div id="calendarNoteBox" role="status" aria-live="polite" class="calendar-note-panel bg-cream-100/80 rounded-2xl border border-pink-200 text-center text-sm text-maroon-900 font-medium shadow-inner">
+                    <h3 class="calendar-note-date">Your heart note</h3>
+                    <p class="calendar-note-description">Choose a calendar date to see its message here. ❤️</p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Cake Section (Side View + Top View Switcher - Image 3 Style) -->
+        <section class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-6 md:p-8 shadow-xl text-center">
+                <div class="text-center max-w-lg mx-auto mb-6">
+                    <h2 class="font-serif text-3xl font-bold text-maroon-900">Birthday Cake Experience 🎂</h2>
+                    <p class="text-xs text-maroon-700/70 mt-1">Switch view, blow out candles, or slice the cake for Chanda!</p>
+                    <div class="inline-flex bg-pink-100 p-1 rounded-full mt-4 border border-pink-200">
+                        <button id="btnSideView" onclick="switchCakeView('side')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all">
+                            Side View (Blow Candle)
+                        </button>
+                        <button id="btnTopView" onclick="switchCakeView('top')" class="px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all">
+                            Top View (Slice Game)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cakeSideContainer" class="flex flex-col items-center justify-center py-6">
+                    <div class="cake-side-stage relative w-64 h-64 flex flex-col items-center justify-end mb-4">
+                        <div class="absolute top-8 flex justify-center gap-6 z-20">
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-10 bg-gradient-to-r from-pink-300 to-rose-400 rounded-t-sm shadow-sm"></div></div>
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-12 bg-gradient-to-r from-amber-200 to-yellow-400 rounded-t-sm shadow-sm"></div></div>
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-10 bg-gradient-to-r from-pink-300 to-rose-400 rounded-t-sm shadow-sm"></div></div>
+                        </div>
+                        <div class="cake-side-top-tier w-40 h-16 bg-pink-300 rounded-t-2xl border-t-4 border-pink-200 relative flex items-center justify-center shadow-inner z-10">
+                            <span class="font-serif text-sm tracking-widest text-cream-50 font-bold drop-shadow"></span>
+                            <div class="absolute -bottom-2 w-full flex justify-around text-pink-100 text-xs"><span>★</span><span>♥</span><span>★</span><span>♥</span><span>★</span></div>
+                        </div>
+                        <div class="cake-side-bottom-tier w-56 h-20 bg-rose-400 rounded-t-2xl border-t-4 border-pink-300 relative flex items-center justify-center shadow-md">
+                            <div class="absolute top-2 w-full border-b-2 border-dashed border-pink-200 opacity-60"></div>
+                            <div class="flex gap-4 text-cream-50 text-xs"><span>✨</span><span>🎉</span><span>🎂</span><span>✨</span></div>
+                        </div>
+                        <div class="cake-side-plate w-64 h-4 bg-gray-200 rounded-full border-b-4 border-gray-300 shadow-lg"></div>
+                    </div>
+
+                    <button onclick="blowOutCandles()" class="bg-maroon-700 hover:bg-maroon-800 text-cream-50 px-6 py-2.5 rounded-full font-semibold shadow-md hover:shadow-lg transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-wind"></i> Tap to Blow Candles 🌬️
+                    </button>
+                </div>
+
+                <div id="cakeTopContainer" class="hidden flex flex-col items-center justify-center py-4">
+                    <p class="text-xs text-pink-700 mb-4 font-medium">Drag across the cake to cut a slice. Your slice will be served on the plate!</p>
+                    <div class="cake-cut-layout">
+                        <div class="flex flex-col items-center">
+                            <div class="cake-canvas-frame relative rounded-full border-4 border-pink-200 shadow-lg overflow-hidden bg-pink-100">
+                                <canvas id="cakeCanvas" width="280" height="280" class="cursor-crosshair" aria-label="Draw a line across the cake to cut a slice"></canvas>
+                            </div>
+                            <div class="mt-4 flex items-center gap-4 text-xs font-semibold text-maroon-800">
+                                <span id="sliceCounter" class="bg-cream-50 px-3 py-1.5 rounded-full border border-pink-200 shadow-sm" aria-live="polite">Slices Made: 0</span>
+                                <button onclick="resetCakeCanvas()" class="text-pink-600 hover:text-maroon-800 underline">Reset Cake</button>
+                            </div>
+                        </div>
+                        <div class="cake-serving-view" aria-live="polite">
+                            <svg viewBox="0 0 280 230" role="img" aria-label="A layered slice of cake served on a plate">
+                                <defs>
+                                    <linearGradient id="plateGlaze" x1="0" y1="0" x2="0.8" y2="1">
+                                        <stop offset="0" stop-color="#f8fafc"/>
+                                        <stop offset="0.55" stop-color="#b9c3cb"/>
+                                        <stop offset="1" stop-color="#77838d"/>
+                                    </linearGradient>
+                                    <linearGradient id="cakeTop" x1="0" y1="0" x2="0.8" y2="1">
+                                        <stop offset="0" stop-color="#fff0d6"/>
+                                        <stop offset="1" stop-color="#d8ae7e"/>
+                                    </linearGradient>
+                                    <linearGradient id="cakeSide" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0" stop-color="#c99465"/>
+                                        <stop offset="1" stop-color="#8f5f42"/>
+                                    </linearGradient>
+                                </defs>
+                                <ellipse cx="140" cy="190" rx="112" ry="27" fill="#362b2b" opacity="0.16"/>
+                                <path d="M27 163 Q140 197 253 163 L244 185 Q140 219 36 185 Z" fill="#68747e"/>
+                                <ellipse cx="140" cy="163" rx="113" ry="31" fill="url(#plateGlaze)" stroke="#71808b" stroke-width="3"/>
+                                <ellipse cx="140" cy="160" rx="96" ry="23" fill="#344653" stroke="#e0e6ea" stroke-width="3"/>
+                                <ellipse cx="140" cy="158" rx="81" ry="16" fill="#455864" opacity="0.75"/>
+                                <g id="servedCakeSlice" class="cake-slice-illustration hidden">
+                                    <path d="M62 128 L145 51 L216 128 L208 163 Q141 185 70 163 Z" fill="url(#cakeSide)" stroke="#87583f" stroke-width="2"/>
+                                    <path d="M62 128 L145 51 L216 128 Z" fill="url(#cakeTop)" stroke="#c49a70" stroke-width="2"/>
+                                    <path d="M67 133 Q140 147 214 133 L212 142 Q140 158 66 142 Z" fill="#fff0d9"/>
+                                    <path d="M66 144 Q140 160 211 145 L210 155 Q140 171 68 155 Z" fill="#b87950"/>
+                                    <path d="M68 155 Q140 171 210 156 L208 165 Q140 181 70 165 Z" fill="#fff0d9"/>
+                                    <path d="M76 128 L145 63 L204 128 Q142 140 76 128 Z" fill="none" stroke="#fff9ee" stroke-width="3" opacity="0.75"/>
+                                    <path d="M106 91 Q112 84 119 92 L114 101 Z" fill="#c94f59"/>
+                                    <path d="M125 78 Q132 70 139 78 L135 88 Z" fill="#edb74a"/>
+                                    <path d="M142 88 Q149 79 156 87 L151 97 Z" fill="#8cae65"/>
+                                    <path d="M152 83 Q164 67 174 75 Q164 77 155 88" fill="#648b54"/>
+                                    <circle cx="185" cy="113" r="2" fill="#9c6846" opacity="0.7"/>
+                                    <circle cx="95" cy="117" r="2" fill="#9c6846" opacity="0.7"/>
+                                </g>
+                            </svg>
+                            <p id="servedSliceLabel" class="text-xs text-maroon-700/70 -mt-1">Cut a slice to serve it here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="flowerSection" class="max-w-4xl mx-auto px-4 py-10 text-center">
+            <span class="text-maroon-600 text-xs font-semibold uppercase tracking-widest">Why You Are So Special</span>
+            <h2 class="font-serif text-3xl md:text-2xl text-maroon-900 mt-1 mb-2">
+                I could give you a hundred reasons, but some feelings are too beautiful for words. ❤️
+            </h2>
+            <p class="font-serif italic text-2x1 md:text-4x1 text-maroon-700 mb-8">
+                So, click around and discover a few of the countless reasons why you’ll always be special to me. 🌷✨
+            </p>
+
+            <!-- Emoticon Buttons Grid -->
+            <div class="flex items-center justify-center gap-4 md:gap-6 mb-8">
+                <button onclick="showReason(0)" id="emoBtn0" class="emo-btn active w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+                <button onclick="showReason(1)" id="emoBtn1" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+                <button onclick="showReason(2)" id="emoBtn2" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-face-smile"></i>
+                </button>
+                <button onclick="showReason(3)" id="emoBtn3" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-star"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Reason Card Popup Box -->
+            <div class="max-w-md mx-auto mb-8 min-h-[130px] flex items-center justify-center">
+                <div id="reasonCard" class="w-full bg-cream-50/95 border border-maroon-700/20 rounded-2xl p-6 shadow-xl text-center transform transition-all duration-300">
+                    <h3 id="reasonTitle" class="font-script text-3xl text-maroon-900 flex items-center justify-center gap-2">
+                        ❤️ Your Warm Heart
+                    </h3>
+                    <p id="reasonDesc" class="font-handwriting text-2xl text-maroon-800 mt-2 leading-relaxed">
+Talking to you is my favorite part of the day because you make even the most ordinary topics feel interesting.                    </p>
+                </div>
+            </div>
+
+            <!-- Bouquet Image -->
+            <div class="relative max-w-sm mx-auto flex justify-center cursor-pointer" onclick="triggerHeartBurst(event)">
+                <div class="w-72 h-80 relative transform hover:scale-105 transition duration-500 flex items-center justify-center">
+                    <img src="./bouquet.png" alt="Colorful flower bouquet" class="w-full h-full object-contain drop-shadow-xl" />
+                </div>
+            </div>
+            <p class="text-[15px] font-sans uppercase tracking-widest text-maroon-700/90 mt-4">Tap bouquet for floating petals</p>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4 py-2">
+            <div class="wish-game-layout">
+            <div class="wish-jar-panel bg-cream-50 border border-maroon-700/20 rounded-xl p-8 shadow-xl text-center relative flex flex-col items-center justify-center">
+                    <div class="wish-jar-heading">
+                    <div class="flex items-center gap-2 text-maroon-600 text-xl font-semibold tracking-widest uppercase mb-1">
+                        <span class="text-maroon-500">✦</span> A LITTLE WISHING JAR <span class="text-maroon-500">✦</span>
+                    </div>
+                    <h3 class="font-serif text-3xl md:text-2xl text-maroon-900 mb-2">A Jar Full of Wishes</h3>
+                    </div>
+
+                    <button id="wishMessageCard" type="button" class="wish-message-card" aria-live="polite" aria-label="Tap to open a wish from the jar" onclick="closeWishMessage()" hidden>
+                        <span id="wishScreenMessage" class="wish-screen-message">Your little wish will appear here ✨</span>
+                        <span id="wishScreenHint" class="wish-screen-hint">Tap the jar to open a wish</span>
+                    </button>
+
+                    <button id="wishJarButton" type="button" onclick="openWishMessage()" class="wish-jar-button" aria-label="Open a little wish">
+                        <span class="wish-jar" aria-hidden="true">
+                            <span class="wish-jar-stars">✦ ✧</span>
+                            <span class="wish-jar-heart">♥</span>
+                        </span>
+                        <span class="mt-3 font-handwriting text-2xl text-maroon-700">tap for a little wish</span>
+                    </button>
+                    <p class="mt-2 text-xs text-maroon-700/70 font-sans">A sweet message, just for you.</p>
+                </div>
+                <section class="game-panel" aria-label="Tic-Tac-Toe game">
+                    <iframe
+                        id="birthdayGameFrame"
+                        src="game.html?embed=1"
+                        class="game-frame"
+                        title="Heart Tic-Tac-Toe game">
+                    </iframe>
+                </section>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4 pt-2 pb-0">
+        </section>
+
+        <section id="letterSection" class="max-w-4xl mx-auto px-4 pt-2 pb-10">
+            <div class="bg-cream-50 border border-maroon-900/10 rounded-2xl p-6 md:p-12 shadow-xl relative overflow-hidden">
+                <div class="text-center mb-8">
+                    <span class="text-maroon-600 text-xs uppercase font-semibold tracking-widest">Secret Envelope</span>
+                    <h3 class="font-serif text-3xl md:text-5xl text-maroon-900 mt-1">Unseal Your Letter 💌</h3>
+                    <p class="text-xs md:text-sm text-maroon-700/70 mt-2 font-sans">Tap the wax seal to open the envelope and reveal my message.</p>
+                </div>
+
+                <div id="envelopeContainer" class="envelope-wrapper relative max-w-xl mx-auto mt-8 mb-12 cursor-pointer" onclick="toggleEnvelope()">
+                    <div class="envelope-flap absolute top-0 left-0 w-full h-36 bg-maroon-800 border-b border-maroon-900 shadow-md flex items-center justify-center">
+                        <div id="waxSeal" class="w-14 h-14 rounded-full bg-gradient-to-br from-gold-400 via-gold-500 to-gold-600 border-2 border-amber-200 shadow-lg flex items-center justify-center transform -translate-y-2 hover:scale-105 transition">
+                            <span class="font-script text-cream-50 text-2xl font-bold select-none">N</span>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-72 bg-maroon-900 rounded-b-xl shadow-2xl relative overflow-hidden border border-maroon-900 flex flex-col justify-end p-6">
+                        <p class="text-cream-200/60 text-xs font-serif italic text-center z-10">Tap seal to unseal letter</p>
+                    </div>
+
+                    <div id="letterPaper" onclick="event.stopPropagation()" class="letter-paper absolute top-6 left-4 right-4 bg-cream-50 border border-maroon-700/20 p-6 md:p-8 rounded-lg shadow-xl opacity-0 transform translate-y-0">
+                        <div class="flex justify-between items-center border-b border-maroon-700/10 pb-3 mb-4">
+                            <span class="font-serif text-maroon-900 font-bold text-lg">My Dearest Chanda,</span>
+                            <span class="text-xs text-maroon-700/60 font-semibold uppercase">14 Nov 2026</span>
+                        </div>
+                        
+                        <div id="typewriterBox" class="font-handwriting text-2xl md:text-2xl text-maroon-900 leading-relaxed min-h-[160px] whitespace-pre-line"></div>
+
+                        <div class="letter-signoff mt-6 pt-4 border-t border-maroon-700/10 flex justify-between items-center">
+                            <button onclick="event.stopPropagation(); restartTypewriter();" class="text-xs px-3 py-1 bg-maroon-100 text-maroon-800 rounded hover:bg-maroon-200 font-sans font-medium transition">
+                                <i class="fa-solid fa-rotate-right"></i> Re-read
+                            </button>
+                            <div class="letter-signature font-script text-3xl text-maroon-700">
+                                Money
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="videoSection" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="text-center mb-8">
+                <span class="text-maroon-600 text-xs uppercase font-semibold tracking-widest">A Special Moment</span>
+                <h3 class="font-serif text-3xl md:text-4xl text-maroon-900 mt-1">A Little Video for You 🎥</h3>
+                <p class="font-sans text-xs md:text-sm text-maroon-700/70 mt-2">A memory I wanted to share with you ❤️</p>
+            </div>
+
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-3 md:p-5 shadow-xl">
+                <video class="w-full max-h-[70vh] object-contain rounded-xl bg-maroon-900" controls playsinline webkit-playsinline preload="metadata">
+                    <source src="./Video_1.mp4" type="video/mp4">
+                    Your browser does not support the video element.
+                </video>
+            </div>
+        </section>
+
+
+        <section id="lastThingSection" class="max-w-md mx-auto px-4 py-10 text-center">
+            <h2 class="font-script text-5xl md:text-6xl text-maroon-800 flex items-center justify-center gap-3">
+                One Last Thing... 🎁
+            </h2>
+            <p class="font-sans text-xs md:text-sm text-maroon-700/70 mt-2 mb-8">
+                A tiny token of appreciation, just for you. Tap the gift to open it
+            </p>
+
+            <!-- 3D Pink Wrapped Gift Box -->
+            <div onclick="openFinalGift()" class="relative inline-block cursor-pointer group">
+                <div id="finalGiftBox" class="w-44 h-44 bg-pink-100 border-2 border-pink-300 rounded-2xl shadow-2xl flex items-center justify-center relative transform transition duration-300 hover:scale-105 animate-gift-shake">
+                    
+                    <!-- Gift Ribbon SVG -->
+                    <svg class="w-36 h-36 drop-shadow-md" viewBox="0 0 100 100">
+                        <rect x="10" y="35" width="80" height="55" rx="6" fill="#FF809B"/>
+                        <rect x="42" y="35" width="16" height="55" fill="#A82C48"/>
+                        <rect x="10" y="55" width="80" height="14" fill="#A82C48"/>
+                        <!-- Ribbon Bow Top -->
+                        <path d="M50,35 Q30,15 25,28 Q25,38 50,35 Z" fill="#A82C48"/>
+                        <path d="M50,35 Q70,15 75,28 Q75,38 50,35 Z" fill="#A82C48"/>
+                        <circle cx="50" cy="35" r="6" fill="#702236"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section id="finalPage" class="hidden max-w-2xl mx-auto px-4 py-12 text-center">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-8 md:p-12 shadow-2xl relative transform transition duration-700">
+                
+                <!-- Hugging Bears Sticker -->
+                <div class="w-40 h-40 mx-auto mb-10 relative bg-black rounded-xl border border-pink-200 flex items-center justify-center shadow-inner">
+                    <img src="./Chanda.jpeg" alt="Hugging Bears Sticker" class="w-32 h-32 object-contain" />
+                </div>
+
+                <h2 class="font-script text-5xl md:text-4xl text-maroon-800 mb-2 flex items-center justify-center gap-2">
+                    Here’s to the magic you bring. <span class="text-pink-500">💕</span>
+                </h2>
+
+                <p class="font-serif italic text-lg md:text-xl text-maroon-900 font-semibold mt-4">
+                    Once again, Happy Birthday, Chanda! 🥳🎂
+                </p>
+
+                <p class="font-handwriting text-2xl md:text-3xl text-maroon-800/90 mt-3 leading-relaxed">
+                    If you’ve scrolled all the way here, remember one thing: you are genuinely one of a kind. Keep creating, keep shining, and never lose the magic you bring into the world.
+                </p>
+
+                <div class="mt-8 pt-6 border-t border-maroon-700/10">
+                    <button onclick="location.reload()" class="px-6 py-2.5 bg-maroon-700 hover:bg-maroon-800 text-cream-50 font-semibold rounded-lg text-xs uppercase tracking-widest shadow transition">
+                        Replay Surprise 🔁
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-8 border-t border-maroon-700/10 text-xs text-maroon-800/60 font-sans tracking-wider uppercase">
+        Created with endless love for Chanda  🎂🥳
+    </footer>
+
+    <!-- Gift Modal -->
+
+
+    <script>
+        /* 1. Canvas Floating Hearts Background */
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class HeartParticle {
+            constructor() { this.reset(true); }
+            reset(initial = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = initial ? Math.random() * canvas.height : canvas.height + 20;
+                this.size = Math.random() * 10 + 6;
+                this.speedY = Math.random() * 0.45 + 0.2;
+                this.opacity = Math.random() * 0.25 + 0.1;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < -20) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.fillStyle = `rgba(168, 44, 72, ${this.opacity})`;
+                ctx.beginPath();
+                const d = this.size;
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-d / 2, -d / 2, -d, d / 3, 0, d);
+                ctx.bezierCurveTo(d, d / 3, d / 2, -d / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        for (let i = 0; i < 350; i++) hearts.push(new HeartParticle());
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => { h.update(); h.draw(); });
+            requestAnimationFrame(animateHearts);
+        }
+        animateHearts();
+
+        /* 2. Birthday Music */
+        const birthdayMusic = document.getElementById('birthdayMusic');
+        const musicIconCircle = document.getElementById('musicIconCircle');
+        const musicStatusText = document.getElementById('musicStatusText');
+
+        function setMusicPlayingState(isPlaying) {
+            musicIconCircle.classList.toggle('animate-spin', isPlaying);
+            musicStatusText.innerText = isPlaying ? 'Playing ♪' : 'Play Melody';
+        }
+
+        function requestBirthdayMusicPlayback() {
+            return birthdayMusic.play().then(() => {
+                setMusicPlayingState(true);
+                return true;
+            }).catch(() => {
+                musicStatusText.innerText = 'Tap to play';
+                return false;
+            });
+        }
+
+        function toggleAudio() {
+            if (birthdayMusic.paused) {
+                requestBirthdayMusicPlayback();
+            } else {
+                birthdayMusic.pause();
+                setMusicPlayingState(false);
+            }
+        }
+
+        function startBirthdayMusicAfterInteraction(event) {
+            if (event.target instanceof Element && event.target.closest('#musicToggleBtn')) {
+                removeBirthdayMusicGestureListeners();
+                return;
+            }
+
+            if (!birthdayMusic.paused) {
+                removeBirthdayMusicGestureListeners();
+                return;
+            }
+
+            requestBirthdayMusicPlayback().then(isPlaying => {
+                if (isPlaying) removeBirthdayMusicGestureListeners();
+            });
+        }
+
+        function removeBirthdayMusicGestureListeners() {
+            document.removeEventListener('pointerdown', startBirthdayMusicAfterInteraction);
+            document.removeEventListener('touchstart', startBirthdayMusicAfterInteraction);
+            document.removeEventListener('keydown', startBirthdayMusicAfterInteraction);
+        }
+
+        document.addEventListener('pointerdown', startBirthdayMusicAfterInteraction);
+        document.addEventListener('touchstart', startBirthdayMusicAfterInteraction, { passive: true });
+        document.addEventListener('keydown', startBirthdayMusicAfterInteraction);
+        requestBirthdayMusicPlayback();
+
+        birthdayMusic.addEventListener('pause', () => {
+            setMusicPlayingState(false);
+        });
+
+        const birthdayVideo = document.querySelector('#videoSection video');
+        let shouldResumeBirthdayMusicAfterVideo = false;
+
+        birthdayVideo.addEventListener('play', () => {
+            shouldResumeBirthdayMusicAfterVideo = !birthdayMusic.paused;
+            if (shouldResumeBirthdayMusicAfterVideo) birthdayMusic.pause();
+        });
+
+        function resumeBirthdayMusicAfterVideo() {
+            if (!shouldResumeBirthdayMusicAfterVideo) return;
+            shouldResumeBirthdayMusicAfterVideo = false;
+            requestBirthdayMusicPlayback();
+        }
+
+        birthdayVideo.addEventListener('pause', resumeBirthdayMusicAfterVideo);
+        birthdayVideo.addEventListener('ended', resumeBirthdayMusicAfterVideo);
+
+        /* 3. Reasons Emoticon Messages (Screenshot 2 & 3) */
+        const reasonsData = [
+            { title: "❤️ Your Warm Heart", desc: "Talking to you is my favorite part of the day because you make even the most ordinary topics feel interesting" },
+            { title: "✨ Your Magical Smile", desc: "There’s something so genuine about your energy—you never try to be anyone other than yourself, and that’s the coolest thing about you. ✨❤️" },
+            { title: "😊 Our Shared Laughter", desc: "Just a reminder that you’re effortlessly one of my favorite people to be around." },
+            { title: "⭐ You Are My Star", desc: "There is genuinely nobody else quite like you, and I’m really glad I get to know you." }
+        ];
+
+        function showReason(idx) {
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`emoBtn${i}`);
+                if (i === idx) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+
+            const card = document.getElementById('reasonCard');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                document.getElementById('reasonTitle').innerText = reasonsData[idx].title;
+                document.getElementById('reasonDesc').innerText = reasonsData[idx].desc;
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200);
+        }
+
+        /* 4. Little Wishing Jar */
+        const wishMessages = [
+            "Happy birthday! You're not older, you're just a limited edition with more features unlocked. 🎂",
+            "Congrats on another year of being the reason group chats stay entertaining. 😂",
+            "You're officially old enough to know better… and still young enough to do it anyway.",
+            "Happy birthday! Your age is now classified information — we'll just say \"vintage and valuable.\" 😎",
+            "Another year older, another year of pretending you'll sleep early. We believe in you. (We don't.) 😂",
+            "Happy birthday! May your cake be big and your responsibilities small. 🎂",
+            "You're like fine wine — getting better with age, and slightly more expensive to keep happy.",
+            "Happy birthday! Remember: age is just a number. A really big, scary number. Kidding! …mostly. 🤣",
+            "Happy birthday! May this year bring you peace, good health, and people who appreciate you as much as you deserve. 💛",
+            "Wishing you a year full of small joys, deep rest, and reasons to smile every single day.",
+            "Happy birthday! Take care of yourself the way you take care of everyone else — you deserve it.",
+            "May your year be gentle with you, and may you be gentle with yourself too.",
+            "Happy birthday! I hope life gives you back all the kindness you've quietly given others.",
+            "Wishing you health, happiness, and the courage to chase whatever makes you happy.",
+            "Happy birthday! Thank you for being the kind of friend who makes ordinary days more enjoyable.",
+            "So grateful the world got you on this day. Keep being the wonderful person you are!",
+            "Happy birthday! Thank you for your patience, your laughter, and for always being a good friend.",
+            "I'm thankful for every memory we've made — and excited for all the ones ahead. Happy birthday!",
+            "Happy birthday to someone who makes life brighter just by being around. Thanks for being a great friend!",
+            "Grateful for your friendship today and every day. Wishing you an amazing birthday!",
+            "Stay golden, stay goofy, stay you. 😎",
+            "Here's to cake for breakfast and zero guilt. 🎂",
+            "May your Wi-Fi be strong and your problems weak. 😂",
+            "Cheers to another year of unforgettable chaos!",
+            "Keep smiling, keep shining, and keep being yourself.",
+            "Another year, another chapter, and plenty of new memories to make!",
+            "Eat cake, enjoy life, and forget about counting the candles!",
+            "Wishing you more adventures, more laughter, and fewer headaches this year!",
+            "Happy birthday, buddy! May your days be filled with laughter, success, good health, and countless happy moments.",
+            "Wishing you a fantastic birthday! Keep being the same fun-loving, cheerful, and amazing friend.",
+            "Another year of friendship, fun conversations, and unforgettable memories. Have the best birthday!",
+            "Happy birthday! May everything you're working towards slowly turn into something you're proud of.",
+            "Here's to another year of good vibes, great memories, and lots of laughter. Enjoy your special day! 🎉"
+        ];
+        let wishMessageTimer = null;
+
+        function openWishMessage() {
+            const wishMessage = document.getElementById('wishScreenMessage');
+            const wishHint = document.getElementById('wishScreenHint');
+            const wishCard = document.getElementById('wishMessageCard');
+            const selectedMessage = wishMessages[Math.floor(Math.random() * wishMessages.length)];
+
+            if (wishMessageTimer) window.clearTimeout(wishMessageTimer);
+            wishMessage.textContent = selectedMessage;
+            wishHint.textContent = 'Tap this message to close . It will disappears automatically ';
+            wishCard.setAttribute('aria-label', `${selectedMessage} Tap to close.`);
+            wishCard.hidden = false;
+            wishCard.classList.add('is-visible');
+            wishMessageTimer = window.setTimeout(closeWishMessage, 10000);
+        }
+
+        function closeWishMessage() {
+            const wishCard = document.getElementById('wishMessageCard');
+            if (!wishCard.classList.contains('is-visible')) return;
+
+            wishCard.classList.remove('is-visible');
+            wishCard.hidden = true;
+            document.getElementById('wishScreenMessage').textContent = 'Your little wish will appear here ✨';
+            document.getElementById('wishScreenHint').textContent = 'Tap the jar to open a wish';
+            wishCard.setAttribute('aria-label', 'Tap to open a wish from the jar');
+            if (wishMessageTimer) {
+                window.clearTimeout(wishMessageTimer);
+                wishMessageTimer = null;
+            }
+        }
+
+        function handleWishScreenKeydown(event) {
+            if (event.key === 'Escape') closeWishMessage();
+        }
+        document.addEventListener('keydown', handleWishScreenKeydown);
+
+        /* 5. Calendar and Candle Cake Interactions */
+        let birthdayHeartTimer = null;
+
+        function showBirthdayHeart() {
+            const previousHeart = document.querySelector('.birthday-heart-reveal');
+            if (previousHeart) previousHeart.remove();
+            if (birthdayHeartTimer) clearTimeout(birthdayHeartTimer);
+
+            const heart = document.createElement('span');
+            heart.className = 'birthday-heart-reveal';
+            heart.setAttribute('aria-hidden', 'true');
+            heart.textContent = '♥';
+            document.body.appendChild(heart);
+
+            const removeHeart = () => {
+                heart.remove();
+                if (birthdayHeartTimer) clearTimeout(birthdayHeartTimer);
+                birthdayHeartTimer = null;
+            };
+
+            heart.addEventListener('animationend', removeHeart, { once: true });
+            birthdayHeartTimer = setTimeout(removeHeart, 2200);
+        }
+
+        function showCalendarNote(day) {
+            const box = document.getElementById('calendarNoteBox');
+            const specialNotes = {
+1: 'Some people make life beautiful just by existing. You are one of them. 💌',
+2: 'Your smile has a magic I cannot explain. ✨',
+3: 'Your happiness will always matter to me. ❤️',
+4: 'I am grateful that life introduced me to you. 🌷',
+5: 'You deserve happiness in every little moment. 💕',
+6: 'Even ordinary days feel special when I think of you. 👀',
+7: 'You are more precious than words can describe. ✨',
+8: 'This month has something special, and it is all about you. 💌',
+9: 'Five days until the world celebrates someone wonderful.❤️',
+10: 'I hope you know how special you are. 🎀',
+11: 'You deserve all the love this universe can offer. ✨',
+12: 'Two days closer to celebrating my favourite person. 💕',
+13: 'Tomorrow is your day, but you make every day beautiful.❤️',
+15: 'Never forget how special you are 💌',
+16: 'The celebration may be over, but my wishes for you never end. ✨',
+17: 'You make the world a little more beautiful. ❤️',
+18: 'If I could gift you one thing, it would be endless happiness. 💕',
+19: 'Some connections are simply priceless. ✨',
+20: 'You deserve to feel loved every single day. ❤️',
+21: 'Your presence is a beautiful gift. 💕',
+22: 'I hope your dreams find their way to you. ✨',
+23: 'Never underestimate how much you mean to someone. ❤️',
+24: 'You are a beautiful chapter in my life. 🎀',
+25: 'I wish I could turn every worry into a smile for you. 💌',
+26: 'The world is lucky to have you. ✨',
+27: 'Some people are unforgettable. You are one of them. ❤️',
+28: 'May life always be kind to your heart. 💕',
+29: 'Thank you for being the wonderful person you are. 🌷',
+30: 'November ends, but you will always remain special to me. ❤️',
+            };
+
+            let descriptionText;
+            if (day === 14) {
+                descriptionText = 'Happy Birthday Chanda !❤️🎂 The day my favourite person came into this world. I wish you endless smiles, beautiful memories, peaceful days, and all the happiness your heart can hold. Never forget how special you are. 👸✨';
+                showBirthdayHeart();
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            } else if (specialNotes[day]) {
+                descriptionText = specialNotes[day];
+            } else {
+                descriptionText = 'A sweet day made special because it belongs to your birthday month! 💕';
+            }
+
+            const dateHeading = document.createElement('h3');
+            dateHeading.className = 'calendar-note-date';
+            dateHeading.textContent = `November ${day}`;
+
+            const description = document.createElement('p');
+            description.className = 'calendar-note-description';
+            description.textContent = descriptionText;
+
+            box.replaceChildren(dateHeading, description);
+        }
+
+        function blowOutCandles() {
+            document.querySelectorAll('.candle-flame').forEach(flame => {
+                flame.style.display = 'none';
+            });
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        let cakeCanvas = null;
+        let cakeCtx = null;
+        let isDrawingSlice = false;
+        let slices = 0;
+        let lastSlicePosition = null;
+        let sliceDragDistance = 0;
+        let cakeCanvasInitialized = false;
+
+        function switchCakeView(view) {
+            const sideContainer = document.getElementById('cakeSideContainer');
+            const topContainer = document.getElementById('cakeTopContainer');
+            const sideButton = document.getElementById('btnSideView');
+            const topButton = document.getElementById('btnTopView');
+
+            if (view === 'side') {
+                sideContainer.classList.remove('hidden');
+                topContainer.classList.add('hidden');
+                sideButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all';
+                topButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all';
+                return;
+            }
+
+            sideContainer.classList.add('hidden');
+            topContainer.classList.remove('hidden');
+            topButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all';
+            sideButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all';
+            initCakeCanvas();
+        }
+
+        function initCakeCanvas() {
+            cakeCanvas = document.getElementById('cakeCanvas');
+            cakeCtx = cakeCanvas.getContext('2d');
+            if (cakeCanvasInitialized) return;
+            cakeCanvasInitialized = true;
+            resetCakeCanvas();
+
+            cakeCanvas.addEventListener('mousedown', startSlice);
+            cakeCanvas.addEventListener('mousemove', drawSlice);
+            window.addEventListener('mouseup', endSlice);
+            cakeCanvas.addEventListener('touchstart', event => {
+                event.preventDefault();
+                startSlice(event.touches[0]);
+            }, { passive: false });
+            cakeCanvas.addEventListener('touchmove', event => {
+                event.preventDefault();
+                drawSlice(event.touches[0]);
+            }, { passive: false });
+            cakeCanvas.addEventListener('touchend', endSlice);
+        }
+
+        function getCakeCanvasPosition(event) {
+            const rect = cakeCanvas.getBoundingClientRect();
+            return {
+                x: (event.clientX - rect.left) * (cakeCanvas.width / rect.width),
+                y: (event.clientY - rect.top) * (cakeCanvas.height / rect.height)
+            };
+        }
+
+        function startSlice(event) {
+            isDrawingSlice = true;
+            lastSlicePosition = getCakeCanvasPosition(event);
+            sliceDragDistance = 0;
+            cakeCtx.beginPath();
+            cakeCtx.moveTo(lastSlicePosition.x, lastSlicePosition.y);
+        }
+
+        function drawSlice(event) {
+            if (!isDrawingSlice) return;
+            const position = getCakeCanvasPosition(event);
+            sliceDragDistance += Math.hypot(position.x - lastSlicePosition.x, position.y - lastSlicePosition.y);
+            cakeCtx.strokeStyle = '#BE185D';
+            cakeCtx.lineWidth = 3;
+            cakeCtx.lineCap = 'round';
+            cakeCtx.lineTo(position.x, position.y);
+            cakeCtx.stroke();
+            cakeCtx.beginPath();
+            cakeCtx.moveTo(position.x, position.y);
+            lastSlicePosition = position;
+        }
+
+        function endSlice() {
+            if (!isDrawingSlice) return;
+            isDrawingSlice = false;
+            lastSlicePosition = null;
+            if (sliceDragDistance < 35) return;
+
+            slices++;
+            document.getElementById('sliceCounter').innerText = `Slices Made: ${slices}`;
+            const sliceIllustration = document.getElementById('servedCakeSlice');
+            sliceIllustration.classList.remove('hidden');
+            sliceIllustration.classList.remove('is-new');
+            void sliceIllustration.getBoundingClientRect();
+            sliceIllustration.classList.add('is-new');
+            sliceIllustration.onanimationend = () => sliceIllustration.classList.remove('is-new');
+            document.getElementById('servedSliceLabel').innerText = `Slice ${slices} served on the plate`;
+            confetti({ particleCount: 20, spread: 35, origin: { y: 0.6 } });
+        }
+
+        function resetCakeCanvas() {
+            if (!cakeCtx || !cakeCanvas) return;
+            slices = 0;
+            isDrawingSlice = false;
+            document.getElementById('sliceCounter').innerText = 'Slices Made: 0';
+            document.getElementById('servedCakeSlice').classList.add('hidden');
+            document.getElementById('servedCakeSlice').classList.remove('is-new');
+            document.getElementById('servedSliceLabel').innerText = 'Cut a slice to serve it here';
+            cakeCtx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height);
+
+            cakeCtx.beginPath();
+            cakeCtx.arc(140, 140, 120, 0, Math.PI * 2);
+            cakeCtx.fillStyle = '#F472B6';
+            cakeCtx.fill();
+
+            cakeCtx.beginPath();
+            cakeCtx.arc(140, 140, 80, 0, Math.PI * 2);
+            cakeCtx.fillStyle = '#FBCFE8';
+            cakeCtx.fill();
+
+            cakeCtx.fillStyle = '#831843';
+            cakeCtx.font = '16px Playfair Display, serif';
+            cakeCtx.textAlign = 'center';
+            cakeCtx.fillText('Cake', 140, 145);
+        }
+
+        /* 6. Envelope Letter Logic */
+        let envelopeIsOpen = false;
+        let typewriterIndex = 0;
+        let typewriterTimer = null;
+        const letterText = "Happy Birthday Chanda! \n You have a rare way of making the world brighter just by being in it. Watching you pursue your passions with so much grace and creativity is truly inspiring. Wishing you a year ahead filled with pure joy, big wins, and all the magic you bring to everyone else. Never lose your sparkle—have the absolute best day!";
+
+        function toggleEnvelope() {
+            const env = document.getElementById('envelopeContainer');
+            const letter = document.getElementById('letterPaper');
+            envelopeIsOpen = !envelopeIsOpen;
+
+            if (envelopeIsOpen) {
+                env.classList.add('open');
+                setTimeout(() => {
+                    letter.classList.remove('opacity-0');
+                    startTypewriter();
+                }, 400);
+            } else {
+                env.classList.remove('open');
+                letter.classList.add('opacity-0');
+                resetTypewriter();
+            }
+        }
+
+        function startTypewriter() {
+            resetTypewriter();
+            typeWriter();
+        }
+
+        function typeWriter() {
+            const box = document.getElementById('typewriterBox');
+            if (typewriterIndex < letterText.length) {
+                box.innerText = letterText.substring(0, typewriterIndex + 1);
+                typewriterIndex++;
+                typewriterTimer = setTimeout(typeWriter, 35);
+            }
+        }
+
+        function resetTypewriter() {
+            if (typewriterTimer) clearTimeout(typewriterTimer);
+            typewriterIndex = 0;
+            document.getElementById('typewriterBox').innerText = "";
+        }
+
+        function restartTypewriter() {
+            startTypewriter();
+        }
+
+
+        /* 8. Gift Coupons & Modal */
+        function openGift(id, title, desc, emoji) {
+            document.getElementById('modalEmoji').innerText = emoji;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('giftModal').classList.remove('hidden');
+            document.getElementById(`badge${id}`).innerText = 'Claimed ❤️';
+            document.getElementById(`badge${id}`).className = 'mt-3 text-[10px] px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-semibold uppercase';
+            confetti({ particleCount: 30, spread: 50 });
+        }
+
+        function closeGiftModal() {
+            document.getElementById('giftModal').classList.add('hidden');
+        }
+
+        /* 9. Final Surprise Gift Box Transition (Screenshot 4 & 5) */
+        function openFinalGift() {
+            confetti({
+                particleCount: 120,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: ['#FF4D73', '#A82C48', '#FFD700']
+            });
+
+            document.getElementById('lastThingSection').classList.add('hidden');
+            const finalPage = document.getElementById('finalPage');
+            finalPage.classList.remove('hidden');
+            finalPage.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function triggerHeartBurst(event) {
+            const originX = event ? event.clientX : window.innerWidth / 2;
+            const originY = event ? event.clientY : window.innerHeight / 2;
+            const petalColors = ['#FF809B', '#FF4D73', '#FFB3C3', '#F3C649'];
+
+            for (let i = 0; i < 18; i++) {
+                const petal = document.createElement('span');
+                petal.className = 'floating-petal';
+                petal.style.left = `${originX}px`;
+                petal.style.top = `${originY}px`;
+                petal.style.backgroundColor = petalColors[i % petalColors.length];
+                petal.style.setProperty('--petal-x', `${(Math.random() - 0.5) * 260}px`);
+                petal.style.setProperty('--petal-y', `${-80 - Math.random() * 220}px`);
+                petal.style.setProperty('--petal-rotation', `${(Math.random() - 0.5) * 720}deg`);
+                document.body.appendChild(petal);
+                petal.addEventListener('animationend', () => petal.remove());
+            }
+
+            confetti({ particleCount: 25, spread: 40, origin: { y: 0.6 } });
+        }
+    </script>
+</body>
+</html>
